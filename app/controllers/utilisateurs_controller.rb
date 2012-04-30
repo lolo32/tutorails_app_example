@@ -12,7 +12,7 @@ class UtilisateursController < ApplicationController
   def create
     @utilisateur  = Utilisateur.new( params[ :utilisateur ])
     if @utilisateur.save
-      flash[:success] = 'Bienvenue dans l''Application Exemple'
+      flash[:success] = 'Bienvenue dans l\'Application Exemple'
       redirect_to @utilisateur
     else
       @titre      = 'Inscription'

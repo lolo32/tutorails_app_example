@@ -84,18 +84,18 @@ describe UtilisateursController do
       it "devrait créer un utilisateur" do
         lambda do
           post :create, :utilisateur => @attr
-        end.should change(Utilisateurer, :count).by(1)
+        end.should change(Utilisateur, :count).by(1)
       end
 
       it "devrait rediriger vers la page d'affichage de l'utilisateur" do
         post :create, :utilisateur => @attr
         response.should redirect_to(utilisateur_path(assigns(:utilisateur)))
       end    
-    end
 
-    it "devrait avoir un message de bienvenue" do
-      post :create, :utilisateur => @attr
-      flash[:success].should =~ /Bienvenue dans l'Application Exemple/i
+      it "devrait avoir un message de bienvenue" do
+        post :create, :utilisateur => @attr
+        flash[:success].should =~ /Bienvenue dans l'Application Exemple/i
+      end
     end
   end
 end
