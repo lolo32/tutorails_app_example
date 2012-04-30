@@ -1,2 +1,24 @@
-<h1>Utilisateurs#new</h1>
-<p>Find me in app/views/utilisateurs/new.html.erb</p>
+<h1>Inscription</h1>
+
+<%= form_for( @utilisateur ) do |f| %>
+  <%= render 'shared/messages_erreurs' %>
+  <div class="field">
+    <%= f.label :nom %><br/>
+    <%= f.text_field :nom %>
+  </div>
+  <div class="field">
+    <%= f.label :courriel %><br/>
+    <%= f.text_field :courriel %>
+  </div>
+  <div class="field">
+    <%= f.label :mdp, 'Mot de passe' %><br/>
+    <%= f.password_field :mdp %>
+  </div>
+  <div class="field">
+    <%= f.label :mdp_confirmation, 'Confirmation' %><br/>
+    <%= f.password_field :mdp_confirmation %>
+  </div>
+  <div class="actions">
+    <%= f.submit 'Inscription' %>
+  </div>
+<% end %>

@@ -1,0 +1,21 @@
+# encoding: utf-8
+# Traduction de ruby on rails en français.
+fr:
+  activerecord:
+
+    attributes:
+      utilisateur:
+        mdp: 'Mot de passe'
+
+    errors:
+      messages:
+        blank: 'ne peut être laissé vide'
+
+      models:
+        utilisateur:
+          attributes:
+            courriel:
+              invalid: 'contient une adresse invalide'
+            mdp:
+              confirmation: 'n''est pas identique à la confirmation'
+              too_short: 'doit faire plus de 6 caractères'
