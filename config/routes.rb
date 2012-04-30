@@ -68,10 +68,16 @@ SampleApp::Application.routes.draw do
 end
 
 #== Route Map
-# Generated on 25 Apr 2012 12:37
+# Generated on 30 Apr 2012 15:19
 #
-#           signup     /signup(.:format)           utilisateurs#new
-#          contact     /contact(.:format)          pages#contact
-#            about     /about(.:format)            pages#about
-#             help     /help(.:format)             pages#help
-#             root     /                           pages#home
+#                  POST   /utilisateurs(.:format)          utilisateurs#create
+#  new_utilisateur GET    /utilisateurs/new(.:format)      utilisateurs#new
+# edit_utilisateur GET    /utilisateurs/:id/edit(.:format) utilisateurs#edit
+#      utilisateur GET    /utilisateurs/:id(.:format)      utilisateurs#show
+#                  PUT    /utilisateurs/:id(.:format)      utilisateurs#update
+#                  DELETE /utilisateurs/:id(.:format)      utilisateurs#destroy
+#           signup        /signup(.:format)                utilisateurs#new
+#          contact        /contact(.:format)               pages#contact
+#            about        /about(.:format)                 pages#about
+#             help        /help(.:format)                  pages#help
+#             root        /                                pages#home

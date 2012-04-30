@@ -1,9 +1,5 @@
 class AddCourrielUniquenessIndex < ActiveRecord::Migration
-  def up
+  def change
     add_index :utilisateurs, :courriel, :unique => true
-  end
-
-  def down
-    remove_index :utilisateurs, :courriel
   end
 end

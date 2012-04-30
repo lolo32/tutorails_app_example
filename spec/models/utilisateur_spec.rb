@@ -3,7 +3,12 @@ require 'spec_helper'
 
 describe Utilisateur do
   before(:each) do
-    @attr = { :nom => "Example User", :courriel => "user@example.com" }
+    @attr = {
+        :nom              => "Example User",
+        :courriel         => "user@example.com",
+        :mdp              => "foobar",
+        :mdp_confirmation => "foobar"
+    }
   end
 
   it "devrait créer une nouvelle instance dotée des attributs valides" do
@@ -55,15 +60,84 @@ describe Utilisateur do
     user_with_duplicate_email = Utilisateur.new(@attr)
     user_with_duplicate_email.should_not be_valid
   end
+
+  describe "password validations" do
+
+    it "devrait exiger un mot de passe" do
+      Utilisateur.new(@attr.merge(:mdp => "", :mdp_confirmation => "")).
+        should_not be_valid
+    end
+
+    it "devrait exiger une confirmation du mot de passe qui correspond" do
+      Utilisateur.new(@attr.merge(:mdp_confirmation => "invalid")).
+        should_not be_valid
+    end
+
+    it "devrait rejeter les mots de passe (trop) courts" do
+      short = "a" * 5
+      hash = @attr.merge(:mdp => short, :mdp_confirmation => short)
+      Utilisateur.new(hash).should_not be_valid
+    end
+
+    it "devrait rejeter les (trop) longs mots de passe" do
+      long = "a" * 41
+      hash = @attr.merge(:mdp => long, :mdp_confirmation => long)
+      Utilisateur.new(hash).should_not be_valid
+    end
+  end
+
+  describe "password encryption" do
+
+    before(:each) do
+      @utilisateur = Utilisateur.create!(@attr)
+    end
+
+    it "devrait avoir un attribut mot de passe chiffré" do
+      @utilisateur.should respond_to(:mdp_chiffre)
+    end
+
+    it "devrait définir le mot de passe chiffré" do
+      @utilisateur.mdp_chiffre.should_not be_blank
+    end
+
+    it 'doit retourner true si les mots de passe coïncident' do
+      @utilisateur.has_mdp?( @attr[:mdp] ).should be_true
+    end
+
+    it 'doit retourner false si les mots de passe divergent' do
+      @utilisateur.has_mdp?( "invalide" ).should be_false
+    end
+
+    describe "méthode d'authentification" do
+
+    it "devrait retourner nul en cas d'inéquation entre email/mot de passe" do
+        wrong_password_user = Utilisateur.authentifie(@attr[:courriel], "wrongpass")
+        wrong_password_user.should be_nil
+      end
+
+      it "devrait retourner nil quand un email ne correspond à aucun utilisateur" do
+        nonexistent_user = Utilisateur.authentifie("bar@foo.com", @attr[:mdp])
+        nonexistent_user.should be_nil
+      end
+
+      it "devrait retourner l'utilisateur si email/mot de passe correspondent" do
+        matching_user = Utilisateur.authentifie(@attr[:courriel], @attr[:mdp])
+        matching_user.should == @utilisateur
+      end
+    end
+  end
 end
+
 # == Schema Information
 #
 # Table name: utilisateurs
 #
-#  id         :integer         not null, primary key
-#  nom        :string(255)
-#  courriel   :string(255)
-#  created_at :datetime        not null
-#  updated_at :datetime        not null
+#  id          :integer         not null, primary key
+#  nom         :string(255)
+#  courriel    :string(255)
+#  created_at  :datetime        not null
+#  updated_at  :datetime        not null
+#  mdp_chiffre :string(255)
+#  sel         :string(255)
 #
 

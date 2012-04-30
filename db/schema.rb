@@ -11,13 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120426083604) do
+ActiveRecord::Schema.define(:version => 20120427105233) do
 
   create_table "utilisateurs", :force => true do |t|
     t.string   "nom"
     t.string   "courriel"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.string   "mdp_chiffre"
+    t.string   "sel"
   end
 
   add_index "utilisateurs", ["courriel"], :name => "index_utilisateurs_on_courriel", :unique => true

@@ -4,6 +4,7 @@ class UtilisateursController < ApplicationController
   end
 
   def show
-    @user = Utilisateur.find( params[:id] )
+    @utilisateur  = Utilisateur.find( params[:id] )
+    @titre        = @utilisateur.nom
   end
 end
