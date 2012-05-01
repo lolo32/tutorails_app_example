@@ -41,4 +41,34 @@ describe "LayoutLinks" do
     click_link "S'inscrire !"
     response.should have_selector('title', :content => "Inscription")
   end
+
+  describe "quand pas identifié" do
+    it "doit avoir un lien de connexion" do
+      visit root_path
+      response.should have_selector('a', :href      => signin_path,
+                                         :content   => "S'identifier")
+    end
+  end # describe "quand pas identifié"
+
+  describe "quand identifié" do
+
+    before (:each) do
+      @utilisateur = FactoryGirl.create(:utilisateur)
+      visit signin_path
+      fill_in :courriel,      :with => @utilisateur.courriel
+      fill_in "Mot de passe", :with => @utilisateur.mdp
+      click_button
+    end
+
+    it "devrait avoir un lien de déconnexion" do
+      visit root_path
+      response.should have_selector("a", :href    => signout_path,
+                                         :content => "Déconnexion")
+    end
+    it "devrait avoir un lien vers le profil" do
+      visit root_path
+      response.should have_selector("a", :href    => utilisateur_path(@utilisateur),
+                                         :content => 'Profil')
+    end
+  end # describe "quand pas identifié"
 end

@@ -29,6 +29,11 @@ class Utilisateur < ActiveRecord::Base
     return user           if user.has_mdp?( mdp_saisis )
   end
 
+  def self.authentifie_with_sel( id, cookie_sel )
+    user = find_by_id( id )
+    (user && user.sel == cookie_sel) ? user : nil
+  end
+
   private
 
     def chiffre_mdp

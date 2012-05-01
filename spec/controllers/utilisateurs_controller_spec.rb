@@ -34,7 +34,7 @@ describe UtilisateursController do
       response.should have_selector("h1>img", :class => "gravatar")
     end
 
-  end
+  end # describe "GET 'show'"
 
   describe "GET 'new'" do
     it "devrait exister" do
@@ -46,7 +46,7 @@ describe UtilisateursController do
       get :new
       response.should have_selector("title", :content => "Inscription")
     end
-  end
+  end # describe "GET 'new'"
 
   describe "POST 'create'" do
 
@@ -72,7 +72,7 @@ describe UtilisateursController do
         post :create, :utilisateur => @attr
         response.should render_template('new')
       end
-    end
+    end # describe "échec"
 
     describe "succès" do
 
@@ -87,6 +87,11 @@ describe UtilisateursController do
         end.should change(Utilisateur, :count).by(1)
       end
 
+      it "devrait identifier l'utilisateur" do
+        post :create, :utilisateur => @attr
+        controller.should be_signed_in
+      end
+
       it "devrait rediriger vers la page d'affichage de l'utilisateur" do
         post :create, :utilisateur => @attr
         response.should redirect_to(utilisateur_path(assigns(:utilisateur)))
@@ -96,6 +101,6 @@ describe UtilisateursController do
         post :create, :utilisateur => @attr
         flash[:success].should =~ /Bienvenue dans l'Application Exemple/i
       end
-    end
-  end
+    end # describe "succès"
+  end # describe "POST 'create'"
 end
