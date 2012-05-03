@@ -103,4 +103,116 @@ describe UtilisateursController do
       end
     end # describe "succès"
   end # describe "POST 'create'"
+
+  describe "GET 'edit'" do
+
+    before(:each) do
+      @utilisateur = FactoryGirl.create(:utilisateur)
+      test_sign_in(@utilisateur)
+    end
+
+    it "devrait réussir" do
+      get :edit, :id => @utilisateur
+      response.should be_success
+    end
+
+    it "devrait avoir le bon titre" do
+      get :edit, :id => @utilisateur
+      response.should have_selector("title", :content => "Édition profil")
+    end
+
+    it "devrait avoir un lien pour changer l'image Gravatar" do
+      get :edit, :id => @utilisateur
+      gravatar_url = "http://gravatar.com/emails"
+      response.should have_selector("a", :href    => gravatar_url,
+                                         :content => "changer")
+    end
+  end # describe "GET 'edit'"
+
+  describe "PUT 'update'" do
+    before(:each) do
+      @utilisateur = FactoryGirl.create(:utilisateur)
+      test_sign_in(@utilisateur)
+    end
+
+    describe "échec" do
+
+      before(:each) do
+        @attr = { :courriel => "", :nom => "", :mdp => "",
+                  :mdp_confirmation => "" }
+      end
+
+      it "devrait retourner la page d'édition" do
+        put :update, :id => @utilisateur, :utilisateur => @attr
+        response.should render_template('edit')
+      end
+
+      it "devrait avoir le bon titre" do
+        put :update, :id => @utilisateur, :utilisateur => @attr
+        response.should have_selector("title", :content => "Édition profil")
+      end
+    end # describe "échec"
+
+    describe "succès" do
+
+      before(:each) do
+        @attr = { :nom => "New Name", :courriel => "user@example.org",
+                  :mdp => "barbaz", :mdp_confirmation => "barbaz" }
+      end
+
+      it "devrait modifier les caractéristiques de l'utilisateur" do
+        put :update, :id => @utilisateur, :utilisateur => @attr
+        @utilisateur.reload
+        @utilisateur.nom.should  == @attr[:nom]
+        @utilisateur.courriel.should == @attr[:courriel]
+      end
+
+      it "devrait rediriger vers la page d'affichage de l'utilisateur" do
+        put :update, :id => @utilisateur, :utilisateur => @attr
+        response.should redirect_to(utilisateur_path(@utilisateur))
+      end
+
+      it "devrait afficher un message flash" do
+        put :update, :id => @utilisateur, :utilisateur => @attr
+        flash[:success].should =~ /actualisé/
+      end
+    end # describe "succès"
+  end # describe "PUT 'update'"
+
+  describe "authentification des pages edit/update" do
+
+    before(:each) do
+      @utilisateur = FactoryGirl.create(:utilisateur)
+    end
+
+    describe "pour un utilisateur non identifié" do
+
+      it "devrait refuser l'acccès à l'action 'edit'" do
+        get :edit, :id => @utilisateur
+        response.should redirect_to(signin_path)
+      end
+
+      it "devrait refuser l'accès à l'action 'update'" do
+        put :update, :id => @utilisateur, :utilisateur => {}
+        response.should redirect_to(signin_path)
+      end
+    end # describe "pour un utilisateur non identifié"
+
+    describe 'pour un utilisateur identifié' do
+      before(:each) do
+        wrong_user = FactoryGirl.create( :utilisateur, :courriel => 'user@example.net' )
+        test_sign_in( wrong_user )
+      end
+
+      it "devrait correspondre à l'utilisateur à éditer" do
+        get :edit, :id => @utilisateur
+        response.should redirect_to(root_path)
+      end
+
+      it "devrait correspondre à l'utilisateur à actualiser" do
+        put :update, :id => @utilisateur, :utilisateur => {}
+        response.should redirect_to(root_path)
+      end
+    end # describe 'pour un utilisateur identifié'
+  end # describe "authentification des pages edit/update"
 end

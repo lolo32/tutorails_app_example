@@ -1,4 +1,5 @@
 class SessionsController < ApplicationController
+
   def new
     @titre = 'S\'identifier'
   end
@@ -15,7 +16,7 @@ class SessionsController < ApplicationController
     else
       # Authentifie l'utilisateur et redirige vers sa page d'affichage.
       sign_in utilisateur
-      redirect_to utilisateur
+      redirect_back_or utilisateur
     end
   end
 
@@ -23,4 +24,5 @@ class SessionsController < ApplicationController
     sign_out
     redirect_to root_path
   end
+
 end

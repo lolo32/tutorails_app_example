@@ -1,4 +1,8 @@
+# encoding: utf-8
 class UtilisateursController < ApplicationController
+  before_filter :authentifie,  :only => [ :edit, :update ]
+  before_filter :correct_user, :only => [ :edit, :update ]
+
   def new
     @utilisateur  = Utilisateur.new
     @titre        = 'Inscription'
@@ -20,4 +24,29 @@ class UtilisateursController < ApplicationController
       render 'new'
     end
   end
+
+  def edit
+    @titre = "Édition profil"
+  end
+
+  def update
+    if @utilisateur.update_attributes( params[:utilisateur] )
+      flash[:success] = 'Profil actualisé.'
+      redirect_to @utilisateur
+    else
+      @titre = 'Édition profil'
+      render 'edit'
+    end
+  end
+
+  private
+
+    def authentifie
+      deny_access unless signed_in?
+    end
+
+    def correct_user
+      @utilisateur = Utilisateur.find( params[:id] )
+      redirect_to(root_path) unless current_utilisateur?(@utilisateur)
+    end
 end

@@ -1,0 +1,29 @@
+<h1>Edition du profil</h1>
+
+<%= form_for(@utilisateur) do |f| %>
+  <%= render 'shared/messages_erreurs', :object => f.object %>
+  <div class="field">
+    <%= f.label :nom %><br />
+    <%= f.text_field :nom %>
+  </div>
+  <div class="field">
+    <%= f.label :courriel %><br />
+    <%= f.text_field :courriel %>
+  </div>
+  <div class="field">
+    <%= f.label :mdp, "Mot de passe" %><br />
+    <%= f.password_field :mdp %>
+  </div>
+  <div class="field">
+    <%= f.label :mdp_confirmation, "Confirmation mot de passe" %><br />
+    <%= f.password_field :mdp_confirmation %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Modifier" %>
+  </div>
+<% end %>
+
+<div>
+  <%= gravatar_for @utilisateur %>
+  <a href="http://gravatar.com/emails">changer</a>
+</div>
