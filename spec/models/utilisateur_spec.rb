@@ -84,7 +84,7 @@ describe Utilisateur do
       hash = @attr.merge(:mdp => long, :mdp_confirmation => long)
       Utilisateur.new(hash).should_not be_valid
     end
-  end
+  end # describe "password validations"
 
   describe "password encryption" do
 
@@ -124,8 +124,28 @@ describe Utilisateur do
         matching_user = Utilisateur.authentifie(@attr[:courriel], @attr[:mdp])
         matching_user.should == @utilisateur
       end
+    end # describe "méthode d'authentification"
+  end # describe "password encryption"
+
+  describe "Attribut admin" do
+
+    before(:each) do
+      @utilisateur = Utilisateur.create!(@attr)
     end
-  end
+
+    it "devrait confirmer l'existence de `admin`" do
+      @utilisateur.should respond_to(:admin)
+    end
+
+    it "ne devrait pas être un administrateur par défaut" do
+      @utilisateur.should_not be_admin
+    end
+
+    it "devrait pouvoir devenir un administrateur" do
+      @utilisateur.toggle!(:admin)
+      @utilisateur.should be_admin
+    end
+  end # describe "Attribut admin"
 end
 
 # == Schema Information

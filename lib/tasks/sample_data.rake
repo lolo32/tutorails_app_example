@@ -2,13 +2,14 @@
 require 'faker'
 
 namespace :db do
-  desc "Peupler la base de données"
+  desc "Peupler la base de données avec des données fictives"
   task :populate => :environment do
     Rake::Task['db:reset'].invoke
-    Utilisateur.create!(:nom              => "Utilisateur exemple",
-                        :courriel         => "example@railstutorial.org",
-                        :mdp              => "foobar",
-                        :mdp_confirmation => "foobar")
+    admin = Utilisateur.create!(:nom              => "Utilisateur exemple",
+                                :courriel         => "example@railstutorial.org",
+                                :mdp              => "foobar",
+                                :mdp_confirmation => "foobar")
+    admin.toggle!(:admin)
     99.times do |n|
       nom  = Faker::Name.name
       courriel = "example-#{n+1}@railstutorial.org"
