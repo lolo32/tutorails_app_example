@@ -1,7 +1,8 @@
 # encoding: utf-8
 class UtilisateursController < ApplicationController
-  before_filter :authentifie,  :only => [ :index, :edit, :update ]
-  before_filter :correct_user, :only => [ :edit, :update ]
+  before_filter :authentifie,       :only => [ :index, :edit, :update, :destroy ]
+  before_filter :correct_user,      :only => [ :edit, :update ]
+  before_filter :admin_utilisateur, :only => :destroy
 
   def index
     @titre = "Liste des utilisateurs"
@@ -44,6 +45,12 @@ class UtilisateursController < ApplicationController
     end
   end
 
+  def destroy
+    Utilisateur.find(params[:id]).destroy
+    flash[:success] = 'Utilisateur supprimé.'
+    redirect_to utilisateurs_path
+  end
+
   private
 
     def authentifie
@@ -53,5 +60,9 @@ class UtilisateursController < ApplicationController
     def correct_user
       @utilisateur = Utilisateur.find( params[:id] )
       redirect_to(root_path) unless current_utilisateur?(@utilisateur)
+    end
+
+    def admin_utilisateur
+      redirect_to(root_path) unless current_utilisateur.admin?
     end
 end

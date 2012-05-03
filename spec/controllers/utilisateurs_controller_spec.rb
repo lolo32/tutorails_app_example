@@ -273,4 +273,44 @@ describe UtilisateursController do
       end
     end # describe 'pour un utilisateur identifié'
   end # describe "authentification des pages edit/update"
+
+  describe "DELETE 'destroy'" do
+
+    before(:each) do
+      @utilisateur = FactoryGirl.create(:utilisateur)
+    end
+
+    describe "en tant qu'utilisaeur non identifié" do
+      it "devrait refuser l'accès" do
+        delete :destroy, :id => @utilisateur
+        response.should redirect_to(signin_path)
+      end
+    end
+
+    describe "en tant qu'utilisateur non administrateur" do
+      it "devrait protéger la page" do
+        test_sign_in(@utilisateur)
+        delete :destroy, :id => @utilisateur
+        response.should redirect_to(root_path)
+      end
+    end
+
+    describe "en tant qu'administrateur" do
+      before(:each) do
+        admin = FactoryGirl.create(:utilisateur, :admin => true)
+        test_sign_in(admin)
+      end
+
+      it "devrait détruire l'utilisateur" do
+        lambda do
+          delete :destroy, :id => @utilisateur
+        end.should change(Utilisateur, :count).by(-1)
+      end
+
+      it "devrait rediriger vers la page des utilisateurs" do
+        delete :destroy, :id => @utilisateur
+        response.should redirect_to(utilisateurs_path)
+      end
+    end # describe "en tant qu'administrateur"
+  end # describe "DELETE 'destroy'"
 end
