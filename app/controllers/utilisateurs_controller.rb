@@ -1,7 +1,12 @@
 # encoding: utf-8
 class UtilisateursController < ApplicationController
-  before_filter :authentifie,  :only => [ :edit, :update ]
+  before_filter :authentifie,  :only => [ :index, :edit, :update ]
   before_filter :correct_user, :only => [ :edit, :update ]
+
+  def index
+    @titre = "Liste des utilisateurs"
+    @utilisateurs = Utilisateur.all
+  end
 
   def new
     @utilisateur  = Utilisateur.new

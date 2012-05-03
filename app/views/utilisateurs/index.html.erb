@@ -1,0 +1,10 @@
+<h1>Tous les utilisateurs</h1>
+
+<ul class="users">
+  <% @utilisateurs.each do |user| %>
+    <li>
+      <%= gravatar_for user, :size => 30 %>
+      <%= link_to user.nom, user %>
+    </li>
+  <% end %>
+</ul>

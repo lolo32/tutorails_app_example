@@ -4,6 +4,45 @@ require 'spec_helper'
 describe UtilisateursController do
   render_views
 
+  describe "GET 'index'" do
+
+    describe "pour utilisateur non identifiés" do
+      it "devrait refuser l'accès" do
+        get :index
+        response.should redirect_to(signin_path)
+        flash[:notice].should =~ /identifier/
+      end
+    end # describe "pour utilisateur non identifiés"
+
+    describe "pour un utilisateur identifié" do
+      before(:each) do
+        @utilisateur = test_sign_in(FactoryGirl.create(:utilisateur))
+        second = FactoryGirl.create(:utilisateur, :courriel => "another@example.com")
+        third  = FactoryGirl.create(:utilisateur, :courriel => "another@example.net")
+
+        @utilisateurs = [ @utilisateur, second, third ]
+      end
+
+      it "devrait réussir" do
+        get :index
+        response.should be_success
+      end
+
+      it "devrait avoir le bon titre" do
+        get :index
+        response.should have_selector("title", :content => "Liste des utilisateurs")
+      end
+
+      it "devrait avoir un élément pour chaque utilisateur" do
+        get :index
+        @utilisateurs.each do |user|
+          response.should have_selector("li", :content => user.nom)
+        end
+      end
+    end # describe "pour un utilisateur identifié"
+
+  end # describe "GET 'index'"
+
   describe "GET 'show'" do
     before(:each) do
       @utilisateur = FactoryGirl.create(:utilisateur)
