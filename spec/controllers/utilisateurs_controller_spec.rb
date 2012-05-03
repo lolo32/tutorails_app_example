@@ -21,6 +21,10 @@ describe UtilisateursController do
         third  = FactoryGirl.create(:utilisateur, :courriel => "another@example.net")
 
         @utilisateurs = [ @utilisateur, second, third ]
+
+        30.times do
+          @utilisateurs << FactoryGirl.create( :utilisateur )
+        end
       end
 
       it "devrait réussir" do
@@ -38,6 +42,21 @@ describe UtilisateursController do
         @utilisateurs.each do |user|
           response.should have_selector("li", :content => user.nom)
         end
+      end
+
+      it "devrait avoir un élément pour chaque utilisateur" do
+        get :index
+        @utilisateurs[0..2].each do |user|
+          response.should have_selector("li", :content => user.nom)
+        end
+      end
+
+      it "devrait paginer les utilisateurs" do
+        get :index
+        response.should have_selector("div.pagination")
+        response.should have_selector("span.disabled", :content => "Previous")
+        response.should have_selector("a", :href => "/utilisateurs?page=2", :content => "2")
+        response.should have_selector("a", :href => "/utilisateurs?page=2", :content => "Next")
       end
     end # describe "pour un utilisateur identifié"
 
