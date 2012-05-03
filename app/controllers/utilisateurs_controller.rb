@@ -10,6 +10,7 @@ class UtilisateursController < ApplicationController
   end
 
   def new
+    redirect_to(root_path) if current_utilisateur
     @utilisateur  = Utilisateur.new
     @titre        = 'Inscription'
   end
@@ -20,14 +21,18 @@ class UtilisateursController < ApplicationController
   end
 
   def create
-    @utilisateur  = Utilisateur.new( params[ :utilisateur ])
-    if @utilisateur.save
-      sign_in @utilisateur
-      flash[:success] = 'Bienvenue dans l\'Application Exemple'
-      redirect_to @utilisateur
+    if current_utilisateur
+      redirect_to(root_path)
     else
-      @titre      = 'Inscription'
-      render 'new'
+      @utilisateur  = Utilisateur.new( params[ :utilisateur ])
+      if @utilisateur.save
+        sign_in @utilisateur
+        flash[:success] = 'Bienvenue dans l\'Application Exemple'
+        redirect_to @utilisateur
+      else
+        @titre      = 'Inscription'
+        render 'new'
+      end
     end
   end
 
@@ -46,8 +51,13 @@ class UtilisateursController < ApplicationController
   end
 
   def destroy
-    Utilisateur.find(params[:id]).destroy
-    flash[:success] = 'Utilisateur supprimé.'
+    @utilisateur = Utilisateur.find( params[:id] )
+    if @utilisateur == current_utilisateur
+      flash[:notice] = 'Vous ne pouvez pas vous supprimer.'
+    else
+      Utilisateur.find(params[:id]).destroy
+      flash[:success] = 'Utilisateur supprimé.'
+    end
     redirect_to utilisateurs_path
   end
 

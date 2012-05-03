@@ -58,7 +58,20 @@ describe UtilisateursController do
         response.should have_selector("a", :href => "/utilisateurs?page=2", :content => "2")
         response.should have_selector("a", :href => "/utilisateurs?page=2", :content => "Next")
       end
+
+      it "ne devrait pas voir les liens de suppression" do
+        get :index
+        response.should_not have_selector("a", :content => 'Supprimer')
+      end
     end # describe "pour un utilisateur identifié"
+
+    describe "pour un administrateur" do
+      it "devrait voir les liens de suppression" do
+        test_sign_in(FactoryGirl.create(:utilisateur, :admin => true ))
+        get :index
+        response.should have_selector("a", :content => 'Supprimer')
+      end
+    end
 
   end # describe "GET 'index'"
 
@@ -161,6 +174,23 @@ describe UtilisateursController do
       end
     end # describe "succès"
   end # describe "POST 'create'"
+
+  describe "En tant qu'utilisateur authentifié" do
+
+    before(:each) do
+      @utilisateur = test_sign_in(FactoryGirl.create(:utilisateur))
+    end
+
+    it "ne devrait pas pouvoir accéder à 'GET new'" do
+      get :new
+      response.should redirect_to(root_path)
+    end
+
+    it "ne devrait pas pouvoir accéder à 'POST create'" do
+      post :create, :utilisateur => FactoryGirl.build(:utilisateur)
+      response.should redirect_to(root_path)
+    end
+  end # describe "en tant qu'utilisateur authentifié"
 
   describe "GET 'edit'" do
 
@@ -297,8 +327,8 @@ describe UtilisateursController do
 
     describe "en tant qu'administrateur" do
       before(:each) do
-        admin = FactoryGirl.create(:utilisateur, :admin => true)
-        test_sign_in(admin)
+        @admin = FactoryGirl.create(:utilisateur, :admin => true)
+        test_sign_in(@admin)
       end
 
       it "devrait détruire l'utilisateur" do
@@ -310,6 +340,12 @@ describe UtilisateursController do
       it "devrait rediriger vers la page des utilisateurs" do
         delete :destroy, :id => @utilisateur
         response.should redirect_to(utilisateurs_path)
+      end
+
+      it "ne devrait pas pouvoir se supprimer lui même" do
+        lambda do
+          delete :destroy, :id => @admin
+        end.should_not change(Utilisateur, :count)
       end
     end # describe "en tant qu'administrateur"
   end # describe "DELETE 'destroy'"
