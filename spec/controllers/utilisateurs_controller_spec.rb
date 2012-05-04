@@ -68,8 +68,15 @@ describe UtilisateursController do
     describe "pour un administrateur" do
       it "devrait voir les liens de suppression" do
         test_sign_in(FactoryGirl.create(:utilisateur, :admin => true ))
+        test_sign_in(FactoryGirl.create(:utilisateur, :admin => true ))
         get :index
         response.should have_selector("a", :content => 'Supprimer')
+      end
+
+      it "ne devrait pas voir le lien pour se supprimer" do
+        test_sign_in(FactoryGirl.create(:utilisateur, :admin => true ))
+        get :index
+        response.should_not have_selector("a", :content => 'Supprimer')
       end
     end
 
